@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Portal</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Configuration to map CSS Variables -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        background: "var(--background)",
+                        foreground: "var(--foreground)",
+                        card: "var(--card)",
+                        "card-foreground": "var(--card-foreground)",
+                        popover: "var(--popover)",
+                        "popover-foreground": "var(--popover-foreground)",
+                        primary: {
+                            DEFAULT: "var(--primary)",
+                            foreground: "var(--primary-foreground)",
+                        },
+                        secondary: {
+                            DEFAULT: "var(--secondary)",
+                            foreground: "var(--secondary-foreground)",
+                        },
+                        muted: {
+                            DEFAULT: "var(--muted)",
+                            foreground: "var(--muted-foreground)",
+                        },
+                        accent: {
+                            DEFAULT: "var(--accent)",
+                            foreground: "var(--accent-foreground)",
+                        },
+                        destructive: {
+                            DEFAULT: "var(--destructive)",
+                            foreground: "var(--destructive-foreground)",
+                        },
+                        border: "var(--border)",
+                        input: "var(--input)",
+                        ring: "var(--ring)",
+                        chart: {
+                            1: "var(--chart-1)",
+                            2: "var(--chart-2)",
+                            3: "var(--chart-3)",
+                            4: "var(--chart-4)",
+                            5: "var(--chart-5)",
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+         :root {
+            --background: #ffffff;
+            --foreground: #333333;
+            --card: #ffffff;
+            --card-foreground: #333333;
+            --popover: #ffffff;
+            --popover-foreground: #333333;
+            --primary: #3b82f6;
+            --primary-foreground: #ffffff;
+            --secondary: #f3f4f6;
+            --secondary-foreground: #4b5563;
+            --muted: #f9fafb;
+            --muted-foreground: #6b7280;
+            --accent: #e0f2fe;
+            --accent-foreground: #1e3a8a;
+            --destructive: #ef4444;
+            --destructive-foreground: #ffffff;
+            --border: #e5e7eb;
+            --input: #e5e7eb;
+            --ring: #3b82f6;
+            --chart-1: #3b82f6;
+            --chart-2: #2563eb;
+            --chart-3: #1d4ed8;
+            --chart-4: #1e40af;
+            --chart-5: #1e3a8a;
+        }
+        
+        .dark {
+            --background: #171717;
+            --foreground: #e5e5e5;
+            --card: #262626;
+            --card-foreground: #e5e5e5;
+            --popover: #262626;
+            --popover-foreground: #e5e5e5;
+            --primary: #3b82f6;
+            --primary-foreground: #ffffff;
+            --secondary: #262626;
+            --secondary-foreground: #e5e5e5;
+            --muted: #1f1f1f;
+            --muted-foreground: #a3a3a3;
+            --accent: #1e3a8a;
+            --accent-foreground: #bfdbfe;
+            --destructive: #ef4444;
+            --destructive-foreground: #ffffff;
+            --border: #404040;
+            --input: #404040;
+            --ring: #3b82f6;
+            --chart-1: #60a5fa;
+            --chart-2: #3b82f6;
+            --chart-3: #2563eb;
+            --chart-4: #1d4ed8;
+            --chart-5: #1e40af;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--foreground);
+            font-family: "Inter", sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- MainLayout Wrapper -->
+    <div class="main-wrapper w-full h-screen mx-auto bg-background overflow-hidden flex flex-col">
+        <!-- Navbar -->
+        <nav class="border-b border-border bg-card h-16 flex items-center px-6 shrink-0 mt-2 justify-between">
+            <div class="logo flex gap-1 cursor-pointer" onclick="navigate('view-home')">
+                <button class="bg-primary text-primary-foreground px-2 py-1 rounded-full font-bold">
+            JP
+          </button>
+                <button class="flex items-center gap-1 text-xl font-bold">
+            jobPortal
+          </button>
+            </div>
+
+            <div class="hidden md:flex nav-links items-center gap-6 capitalize text-md">
+                <a href="#" class="hover:underline" onclick="navigate('view-home')">browse jobs</a
+          >
+          <a href="#" class="hover:underline" onclick="navigate('view-home')"
+            >companies</a
+          >
+          <a href="#" class="hover:underline" onclick="navigate('view-home')"
+            >message</a
+          >
+        </div>
+
+        <div class="hidden lg:block search-bar w-full max-w-sm">
+          <input
+            type="text"
+            placeholder="Search jobs..."
+            class="w-full border border-border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+          />
+        </div>
+
+        <div class="actions flex items-center gap-4">
+          <button
+            onclick="navigate('view-login')"
+            class="bg-primary text-primary-foreground px-4 py-2 rounded-full hover:bg-chart-3 transition-colors"
+          >
+            Sign In
+          </button>
+          <button
+            onclick="navigate('view-register')"
+            class="bg-secondary text-secondary-foreground px-4 py-2 rounded-full hover:bg-secondary/80 transition-colors"
+          >
+            Sign Up
+          </button>
+        </div>
+      </nav>
+
+      <!-- Content Split -->
+      <div class="flex-1 grid grid-cols-[100px_1fr] overflow-hidden">
+        <!-- SideBar -->
+        <aside class="border-r border-border bg-card">
+          <div
+            class="h-full w-full flex flex-col items-center justify-between py-6 px-2"
+          >
+            <div class="w-full flex flex-col items-center gap-8">
+              <div class="flex flex-col items-center gap-2 w-full">
+                <!-- Sidebar Links -->
+                <button
+                  onclick="navigate('view-home')"
+                  class="flex flex-col items-center justify-center gap-1.5 w-full py-4 border-l-2 transition-all duration-200 border-primary text-primary bg-primary/5"
+                >
+                  <i data-lucide="house" class="w-5 h-5 mb-1"></i>
+                  <span
+                    class="text-[10px] uppercase tracking-wider font-semibold"
+                    >Home</span
+                  >
+                </button>
+                <button
+                  onclick="navigate('view-home')"
+                  class="flex flex-col items-center justify-center gap-1.5 w-full py-4 border-l-2 transition-all duration-200 border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                >
+                  <i data-lucide="briefcase" class="w-5 h-5 mb-1"></i>
+                  <span
+                    class="text-[10px] uppercase tracking-wider font-semibold"
+                    >Jobs</span
+                  >
+                </button>
+                <button
+                  onclick="navigate('view-home')"
+                  class="flex flex-col items-center justify-center gap-1.5 w-full py-4 border-l-2 transition-all duration-200 border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                >
+                  <i data-lucide="info" class="w-5 h-5 mb-1"></i>
+                  <span
+                    class="text-[10px] uppercase tracking-wider font-semibold"
+                    >About</span
+                  >
+                </button>
+                <button
+                  onclick="navigate('view-home')"
+                  class="flex flex-col items-center justify-center gap-1.5 w-full py-4 border-l-2 transition-all duration-200 border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                >
+                  <i data-lucide="user" class="w-5 h-5 mb-1"></i>
+                  <span
+                    class="text-[10px] uppercase tracking-wider font-semibold"
+                    >Profile</span
+                  >
+                </button>
+              </div>
+            </div>
+            <div class="w-full">
+              <button
+                class="flex flex-col items-center justify-center gap-1.5 w-full py-4 text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-all duration-200 border-l-2 border-transparent hover:border-destructive"
+              >
+                <i data-lucide="log-out" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] uppercase tracking-wider font-semibold"
+                  >Logout</span
+                >
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Scrollable Area -->
+        <main
+          class="routes-wrapper h-full overflow-y-auto bg-muted/20 flex flex-col relative"
+        >
+          <div class="flex-1">
+            <!-- VIEW: HOME PAGE -->
+            <div
+              id="view-home"
+              class="view-section block max-w-6xl mx-auto px-6 py-12 space-y-20"
+            >
+              <!-- Hero -->
+              <section class="text-center max-w-4xl mx-auto space-y-6">
+                <h1 class="text-5xl font-bold tracking-tight text-foreground">
+                  Elevate your career journey with precision.
+                </h1>
+                <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Connect with top-tier companies and find roles that align with
+                  your professional goals and expertise.
+                </p>
+                <div
+                  class="mt-8 flex flex-col md:flex-row items-center bg-card p-2 rounded-full shadow-md border border-border"
+                >
+                  <div class="flex-1 flex items-center px-4 w-full md:w-auto">
+                    <i
+                      data-lucide="search"
+                      class="text-muted-foreground w-5 h-5 mr-3"
+                    ></i>
+                    <input
+                      type="text"
+                      placeholder="Job Title, Keywords..."
+                      class="w-full bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground h-12"
+                    />
+                  </div>
+                  <div class="hidden md:block w-[1px] h-8 bg-border"></div>
+                  <div
+                    class="flex-1 flex items-center px-4 w-full md:w-auto border-t md:border-t-0 border-border mt-2 md:mt-0 pt-2 md:pt-0"
+                  >
+                    <i
+                      data-lucide="map-pin"
+                      class="text-muted-foreground w-5 h-5 mr-3"
+                    ></i>
+                    <input
+                      type="text"
+                      placeholder="City or Remote"
+                      class="w-full bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground h-12"
+                    />
+                  </div>
+                  <button
+                    class="w-full md:w-auto bg-primary text-primary-foreground px-8 py-3 rounded-full font-medium hover:bg-chart-3 transition-colors mt-2 md:mt-0"
+                  >
+                    Search Jobs
+                  </button>
+                </div>
+              </section>
+
+              <!-- Featured Categories -->
+              <section>
+                <div class="flex justify-between items-end mb-8">
+                  <div>
+                    <h2 class="text-2xl font-bold text-foreground">
+                      Featured Categories
+                    </h2>
+                    <p class="text-muted-foreground mt-1">
+                      Explore high-growth sectors curated for your skill set.
+                    </p>
+                  </div>
+                  <div
+                    class="text-primary font-medium flex items-center hover:underline cursor-pointer"
+                  >
+                    View all
+                    <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <!-- Large Card -->
+                  <div
+                    class="md:col-span-1 md:row-span-2 bg-accent/20 border border-accent/30 rounded-2xl p-6 flex flex-col justify-between"
+                  >
+                    <div>
+                      <div
+                        class="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-6"
+                      >
+                        <i
+                          data-lucide="code-2"
+                          class="text-primary w-6 h-6"
+                        ></i>
+                      </div>
+                      <h3 class="text-xl font-bold text-foreground mb-2">
+                        Software Engineering
+                      </h3>
+                      <p class="text-muted-foreground text-sm leading-relaxed">
+                        Over 1,200 new positions for Full-Stack, Backend, and
+                        Frontend developers at leading tech hubs.
+                      </p>
+                    </div>
+                    <div class="mt-8 flex items-center gap-3">
+                      <span
+                        class="bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full"
+                        >High Demand</span
+                      >
+                      <span class="text-xs text-muted-foreground"
+                        >840 Companies Hiring</span
+                      >
+                    </div>
+                  </div>
+
+                  <!-- Category Cards -->
+                  <div
+                    class="bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-shadow cursor-pointer"
+                  >
+                    <div
+                      class="bg-secondary w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+                    >
+                      <i
+                        data-lucide="pen-tool"
+                        class="text-primary w-5 h-5"
+                      ></i>
+                    </div>
+                    <h3 class="font-bold text-foreground">Product Design</h3>
+                    <p class="text-sm text-muted-foreground mt-1">
+                      UI/UX & Visual Design
+                    </p>
+                  </div>
+
+                  <div
+                    class="bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-shadow cursor-pointer"
+                  >
+                    <div
+                      class="bg-secondary w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+                    >
+                      <i
+                        data-lucide="line-chart"
+                        class="text-primary w-5 h-5"
+                      ></i>
+                    </div>
+                    <h3 class="font-bold text-foreground">Data Science</h3>
+                    <p class="text-sm text-muted-foreground mt-1">
+                      AI, Analytics & Big Data
+                    </p>
+                  </div>
+
+                  <div
+                    class="bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-shadow cursor-pointer"
+                  >
+                    <div
+                      class="bg-secondary w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+                    >
+                      <i
+                        data-lucide="landmark"
+                        class="text-primary w-5 h-5"
+                      ></i>
+                    </div>
+                    <h3 class="font-bold text-foreground">Fintech</h3>
+                    <p class="text-sm text-muted-foreground mt-1">
+                      Finance & Blockchain
+                    </p>
+                  </div>
+
+                  <div
+                    class="bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-shadow cursor-pointer"
+                  >
+                    <div
+                      class="bg-secondary w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+                    >
+                      <i
+                        data-lucide="trending-up"
+                        class="text-primary w-5 h-5"
+                      ></i>
+                    </div>
+                    <h3 class="font-bold text-foreground">Growth</h3>
+                    <p class="text-sm text-muted-foreground mt-1">
+                      Marketing & Operations
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Trending Opportunities -->
+              <section>
+                <div class="mb-8">
+                  <h2 class="text-2xl font-bold text-foreground">
+                    Trending Opportunities
+                  </h2>
+                  <p class="text-muted-foreground mt-1">
+                    Personalized recommendations based on your profile.
+                  </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <!-- Job 1 -->
+                  <div
+                    class="bg-card border border-border rounded-2xl p-6 flex flex-col justify-between hover:shadow-md transition-shadow"
+                  >
+                    <div class="flex items-start gap-4">
+                      <div
+                        class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center shrink-0"
+                      >
+                        <div class="w-6 h-6 bg-primary/20 rounded-full"></div>
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                          <h3 class="font-bold text-foreground text-lg">
+                            Senior UX Architect
+                          </h3>
+                          <span
+                            class="bg-accent text-accent-foreground text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                            >New</span
+                          >
+                        </div>
+                        <p class="text-primary text-sm font-medium">
+                          Lumina Systems
+                        </p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >Remote</span
+                          >
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >$140k - $180k</span
+                          >
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >Full-time</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="flex justify-between items-center mt-6 pt-4 border-t border-border"
+                    >
+                      <span class="text-xs text-muted-foreground"
+                        >Posted 2 hours ago</span
+                      >
+                      <button
+                        class="bg-primary text-primary-foreground text-sm font-medium px-6 py-2 rounded-full hover:bg-primary/90 transition-colors"
+                      >
+                        Apply Now
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Job 2 -->
+                  <div
+                    class="bg-card border border-border rounded-2xl p-6 flex flex-col justify-between hover:shadow-md transition-shadow"
+                  >
+                    <div class="flex items-start gap-4">
+                      <div
+                        class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center shrink-0"
+                      >
+                        <div class="w-6 h-6 bg-primary/20 rounded-full"></div>
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                          <h3 class="font-bold text-foreground text-lg">
+                            Lead Cloud Engineer
+                          </h3>
+                        </div>
+                        <p class="text-primary text-sm font-medium">
+                          Vertex Cloud
+                        </p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >New York, NY</span
+                          >
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >$180k - $210k</span
+                          >
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >Hybrid</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="flex justify-between items-center mt-6 pt-4 border-t border-border"
+                    >
+                      <span class="text-xs text-muted-foreground"
+                        >Posted 5 hours ago</span
+                      >
+                      <button
+                        class="bg-primary text-primary-foreground text-sm font-medium px-6 py-2 rounded-full hover:bg-primary/90 transition-colors"
+                      >
+                        Apply Now
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Job 3 -->
+                  <div
+                    class="bg-card border border-border rounded-2xl p-6 flex flex-col justify-between hover:shadow-md transition-shadow"
+                  >
+                    <div class="flex items-start gap-4">
+                      <div
+                        class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center shrink-0"
+                      >
+                        <div class="w-6 h-6 bg-primary/20 rounded-full"></div>
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                          <h3 class="font-bold text-foreground text-lg">
+                            Content Strategist
+                          </h3>
+                        </div>
+                        <p class="text-primary text-sm font-medium">
+                          Vibe Media
+                        </p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >Remote</span
+                          >
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >$90k - $120k</span
+                          >
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >Contract</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="flex justify-between items-center mt-6 pt-4 border-t border-border"
+                    >
+                      <span class="text-xs text-muted-foreground"
+                        >Posted Yesterday</span
+                      >
+                      <button
+                        class="bg-primary text-primary-foreground text-sm font-medium px-6 py-2 rounded-full hover:bg-primary/90 transition-colors"
+                      >
+                        Apply Now
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Job 4 -->
+                  <div
+                    class="bg-card border border-border rounded-2xl p-6 flex flex-col justify-between hover:shadow-md transition-shadow"
+                  >
+                    <div class="flex items-start gap-4">
+                      <div
+                        class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center shrink-0"
+                      >
+                        <div class="w-6 h-6 bg-primary/20 rounded-full"></div>
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                          <h3 class="font-bold text-foreground text-lg">
+                            Risk Analyst
+                          </h3>
+                        </div>
+                        <p class="text-primary text-sm font-medium">
+                          Secure Capital
+                        </p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >Chicago, IL</span
+                          >
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >$110k - $145k</span
+                          >
+                          <span
+                            class="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full"
+                            >On-site</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="flex justify-between items-center mt-6 pt-4 border-t border-border"
+                    >
+                      <span class="text-xs text-muted-foreground"
+                        >Posted 1 day ago</span
+                      >
+                      <button
+                        class="bg-primary text-primary-foreground text-sm font-medium px-6 py-2 rounded-full hover:bg-primary/90 transition-colors"
+                      >
+                        Apply Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Stats Banner -->
+              <section
+                class="bg-slate-900 text-white rounded-3xl p-10 mt-12 flex flex-col md:flex-row justify-around items-center gap-8 shadow-xl"
+              >
+                <div class="text-center">
+                  <p class="text-4xl font-bold mb-2">45k+</p>
+                  <p
+                    class="text-slate-400 text-xs font-semibold tracking-widest uppercase"
+                  >
+                    Active Jobs
+                  </p>
+                </div>
+                <div class="hidden md:block w-[1px] h-12 bg-slate-700"></div>
+                <div class="text-center">
+                  <p class="text-4xl font-bold mb-2">12k+</p>
+                  <p
+                    class="text-slate-400 text-xs font-semibold tracking-widest uppercase"
+                  >
+                    Top Companies
+                  </p>
+                </div>
+                <div class="hidden md:block w-[1px] h-12 bg-slate-700"></div>
+                <div class="text-center">
+                  <p class="text-4xl font-bold mb-2">2m+</p>
+                  <p
+                    class="text-slate-400 text-xs font-semibold tracking-widest uppercase"
+                  >
+                    Successful Hires
+                  </p>
+                </div>
+              </section>
+            </div>
+
+            <!-- VIEW: LOGIN PAGE (Hidden by default) -->
+            <div
+              id="view-login"
+              class="view-section hidden flex items-center justify-center w-full py-20 px-4"
+            >
+              <div
+                class="w-full max-w-md bg-card border border-border rounded-2xl shadow-sm p-8"
+              >
+                <div class="text-center mb-8">
+                  <h1 class="text-3xl font-bold text-foreground">
+                    Welcome back
+                  </h1>
+                  <p class="text-sm text-muted-foreground mt-2">
+                    Enter your credentials to access your account
+                  </p>
+                </div>
+                <form
+                  onsubmit="
+                    event.preventDefault();
+                    navigate('view-home');
+                  "
+                  class="space-y-5"
+                >
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-foreground mb-1"
+                      >Email</label
+                    >
+                    <input
+                      type="email"
+                      required
+                      class="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-foreground mb-1"
+                      >Password</label
+                    >
+                    <input
+                      type="password"
+                      required
+                      class="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    class="w-full bg-primary text-primary-foreground py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-colors mt-2"
+                  >
+                    Sign In
+                  </button>
+                </form>
+                <div class="text-center text-sm text-muted-foreground mt-6">
+                  Don't have an account?
+                  <span
+                    onclick="navigate('view-register')"
+                    class="text-primary font-medium hover:underline cursor-pointer"
+                    >Sign up</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- VIEW: REGISTER PAGE (Hidden by default) -->
+            <div
+              id="view-register"
+              class="view-section hidden flex items-center justify-center w-full py-16 px-4"
+            >
+              <div
+                class="w-full max-w-md bg-card border border-border rounded-2xl shadow-sm p-8"
+              >
+                <div class="text-center mb-8">
+                  <h1 class="text-3xl font-bold text-foreground">
+                    Create an account
+                  </h1>
+                  <p class="text-sm text-muted-foreground mt-2">
+                    Join CareerPath to find your dream job
+                  </p>
+                </div>
+                <form
+                  onsubmit="
+                    event.preventDefault();
+                    navigate('view-home');
+                  "
+                  class="space-y-5"
+                >
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-foreground mb-1"
+                      >Full Name</label
+                    >
+                    <input
+                      type="text"
+                      required
+                      class="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
+                      placeholder="John Doe"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-foreground mb-1"
+                      >Email</label
+                    >
+                    <input
+                      type="email"
+                      required
+                      class="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-foreground mb-1"
+                      >Password</label
+                    >
+                    <input
+                      type="password"
+                      required
+                      class="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-foreground mb-1"
+                      >Confirm Password</label
+                    >
+                    <input
+                      type="password"
+                      required
+                      class="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    class="w-full bg-primary text-primary-foreground py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-colors mt-2"
+                  >
+                    Sign Up
+                  </button>
+                </form>
+                <div class="text-center text-sm text-muted-foreground mt-6">
+                  Already have an account?
+                  <span
+                    onclick="navigate('view-login')"
+                    class="text-primary font-medium hover:underline cursor-pointer"
+                    >Sign in</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <footer
+              class="w-full border-t border-border bg-card py-12 px-6 md:px-12 mt-auto"
+            >
+              <div
+                class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10"
+              >
+                <div class="flex flex-col gap-4 col-span-1 md:col-span-1">
+                  <h2
+                    class="text-2xl font-bold tracking-tighter text-foreground"
+                  >
+                    CareerPath
+                  </h2>
+                  <p class="text-sm text-muted-foreground max-w-xs">
+                    Connecting global talent with industry-leading opportunities
+                    through precision matching and career advocacy.
+                  </p>
+                </div>
+                <div class="flex flex-col gap-3">
+                  <h3 class="font-semibold text-lg text-foreground mb-2">
+                    Job Seekers
+                  </h3>
+                  <a
+                    class="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                    onclick="navigate('view-home')"
+                    >Find Jobs</a
+                  >
+                  <a
+                    class="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                    onclick="navigate('view-home')"
+                    >Browse Companies</a
+                  >
+                  <a
+                    class="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                    onclick="navigate('view-home')"
+                    >Salary Insights</a
+                  >
+                </div>
+                <div class="flex flex-col gap-3">
+                  <h3 class="font-semibold text-lg text-foreground mb-2">
+                    Employers
+                  </h3>
+                  <a
+                    class="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                    onclick="navigate('view-home')"
+                    >Post a Job</a
+                  >
+                  <a
+                    class="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                    onclick="navigate('view-home')"
+                    >Pricing</a
+                  >
+                  <a
+                    class="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                    onclick="navigate('view-home')"
+                    >Contact Sales</a
+                  >
+                </div>
+                <div class="flex flex-col gap-4">
+                  <h3 class="font-semibold text-lg text-foreground mb-2">
+                    Stay Connected
+                  </h3>
+                  <div class="flex gap-4 mb-4">
+                    <a
+                      href="#"
+                      class="text-muted-foreground hover:text-primary transition-colors"
+                      ><i data-lucide="linkedin" class="w-5 h-5"></i
+                    ></a>
+                <a href="#" class="text-muted-foreground hover:text-primary transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i
+                    ></a>
+                <a href="#" class="text-muted-foreground hover:text-primary transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i
+                    ></a>
+            </div>
+            <button class="flex items-center justify-between w-full max-w-[200px] border border-border px-4 py-2 text-sm text-foreground hover:bg-secondary transition-colors rounded-md">
+                    Get Job Alerts
+                    <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                  </button>
+    </div>
+    </div>
+    <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between text-xs text-muted-foreground">
+        <p>&copy; 2026 CareerPath. All rights reserved.</p>
+        <div class="flex gap-4 mt-4 md:mt-0">
+            <a href="#" class="hover:text-primary transition-colors">Privacy Policy</a
+                  >
+                  <a href="#" class="hover:text-primary transition-colors"
+                    >Terms of Service</a
+                  >
+                </div>
+              </div>
+            </footer>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide Icons
+      lucide.createIcons();
+
+      // Simple Vanilla JS Router mapped to CSS classes
+      function navigate(viewId) {
+        // Hide all elements with 'view-section'
+        const views = document.querySelectorAll(".view-section");
+        views.forEach((view) => {
+          view.classList.remove("block");
+          view.classList.add("hidden");
+        });
+
+        // Show targeted view
+        const targetView = document.getElementById(viewId);
+        if (targetView) {
+          targetView.classList.remove("hidden");
+          targetView.classList.add("block");
+
+          // Scroll to top of the main container when navigating
+          document.querySelector(".routes-wrapper").scrollTo(0, 0);
+        }
+      }
+    </script>
+  </body>
+</html>
